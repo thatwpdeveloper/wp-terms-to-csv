@@ -20,28 +20,28 @@
  * @subpackage Wp_Terms_To_Csv/includes
  * @author     That WP Developer <thatwpdeveloper@gmail.com>
  */
-final class WP_Terms_CSV_Factory {
+class WP_Terms_CSV_Factory {
 
 	/**
-	* Holds the instance of the class.
-	*
-	* @since      1.0.0
-    * @access private
-	* @var array $instance Holds the instance of the class.
-	*/
+	 * Holds the instance of the class.
+	 *
+	 * @since      1.0.0
+	 * @access private
+	 * @var array $instance
+	 */
 	private static $instance;
 	/**
 	 * Placeholder for all registered taxonomies inside WordPress.
 	 *
 	 * @since      1.0.0
-	 * @var array $taxonomies Placeholder for all registered taxonomies inside WordPress.
+	 * @var array $taxonomies
 	 */
 	public $taxonomies;
 	/**
 	 * Placeholder for all registered terms inside WordPress.
 	 *
 	 * @since      1.0.0
-	 * @var array $terms Placeholder for all registered terms inside WordPress.
+	 * @var array $terms
 	 */
 	public $terms;
 	/**
@@ -49,7 +49,7 @@ final class WP_Terms_CSV_Factory {
 	 *
 	 * @since      1.0.0
 	 * @access     private
-	 * @var string $filename Placeholder for the generated filename.
+	 * @var string $filename
 	 */
 	private $filename;
 	/**
@@ -57,31 +57,35 @@ final class WP_Terms_CSV_Factory {
 	 *
 	 * @since      1.0.0
 	 * @access     private
-	 * @var array $structure Placeholder for the generated structure.
+	 * @var array $structure
 	 */
 	private $structure = array();
 	/**
 	 * Placeholder for arguments related to querying terms.
 	 *
+	 * It is set to private, because we need to get empty terms and need to avoid any alteration.
+	 *
 	 * @since      1.0.0
-	 * @access     public
-	 * @var array $terms_args Placeholder for arguments related to querying terms.
+	 * @access     private
+	 * @var array $terms_args
 	 */
-	public $terms_args;
+	private $terms_args;
 	/**
 	 * Placeholder for arguments related to querying taxonomies.
 	 *
+	 * It is set to private, because we need to get retrieve terms\ names only and need to avoid any alteration.
+	 *
 	 * @since      1.0.0
-	 * @access     public
-	 * @var array $taxonomies_args Placeholder for arguments related to querying taxonomies.
+	 * @access     private
+	 * @var array $taxonomies_args
 	 */
-	public $taxonomies_args;
+	private $taxonomies_args;
 	/**
-	 * Placeholder for the data outputed to file.
+	 * Placeholder for the data outputted to file.
 	 *
 	 * @since      1.0.0
 	 * @access     public
-	 * @var array $file_data Placeholder for the data outputed to file.
+	 * @var  array $file_data
 	 */
 	protected static $file_data = array();
 
@@ -93,7 +97,6 @@ final class WP_Terms_CSV_Factory {
 
 		$this->set_taxonomies_args();
 		$this->set_terms_args();
-
 		add_action( 'wp', $this->run_export() );
 	}
 
@@ -102,18 +105,15 @@ final class WP_Terms_CSV_Factory {
 	 *
 	 * @since      1.0.0
 	 * @access     protected
-	 * @return mixed
+	 * @return     array
 	 */
 	protected function set_taxonomies_args() {
 
 		$this->taxonomies_args['query'] = array(
 			'public' => true
 		);
-
 		$this->taxonomies_args['output'] = 'names';
-
 		$this->taxonomies_args['operator'] = 'and';
-
 
 		return $this->taxonomies_args;
 	}
@@ -123,7 +123,7 @@ final class WP_Terms_CSV_Factory {
 	 *
 	 * @since      1.0.0
 	 * @access     protected
-	 * @return mixed
+	 * @return     array
 	 */
 	protected function set_terms_args() {
 
@@ -135,7 +135,11 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
-	 * @return array
+	 * Gets the WordPress taxonomies.
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     array
 	 */
 	protected function get_taxonomies() {
 
@@ -149,22 +153,30 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
-	 * @param $taxonomy
+	 * Gets all terms, including empty terms for a specific taxonomy.
 	 *
-	 * @return array|int|WP_Error
+	 * @since      1.0.0
+	 * @access     protected
+	 * @param      $taxonomy
+	 * @return     array|int|WP_Error
 	 */
 	public function get_terms( $taxonomy ) {
 
 		$this->terms = get_terms( $taxonomy, $this->terms_args['query'] );
 
-
 		return $this->terms;
 	}
 
 	/**
-	 * @return string
+	 * Sets the filename for the exported file.
+	 *
+	 * If a filename is not set, it will fallback to 'csv-terms-export-2017-12-10.csv'
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     string
 	 */
-	public function set_filename() {
+	protected function set_filename() {
 
 		$now = date( 'j-m-Y-h-i-s-a' );
 
@@ -180,7 +192,11 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
-	 * @return array
+	 * Defines the columns for the generated file.
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     array
 	 */
 	protected function set_structure_columns() {
 		$this->structure['names'] = array();
@@ -191,11 +207,13 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
-	 * @param $taxonomy
+	 * Sets the headings for the columns.
 	 *
-	 * @return array
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     array
 	 */
-	public function set_structure_headings( $taxonomy ) {
+	protected function set_structure_headings( $taxonomy ) {
 
 		array_unshift( $this->structure['names'], $taxonomy );
 		array_unshift( $this->structure['slugs'], $taxonomy . '-slugs' );
@@ -206,9 +224,24 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
+	 * A helper method to set a header.
 	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @param      $header
 	 */
-	public function get_headers() {
+	protected function set_header( $header ) {
+
+		return header( $header );
+	}
+
+	/**
+	 * Defines the headers for the outputted file.
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 */
+	protected function get_headers() {
 		$this->set_header( 'Content-type: text/csv' );
 		$this->set_header( 'Content-Disposition: attachment; filename=' . $this->filename . '.csv' );
 		$this->set_header( 'Pragma: no-cache' );
@@ -216,11 +249,14 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
-	 * @param $terms
+	 * A helper method that loops through terms.
 	 *
-	 * @return array
+	 * @since      1.0.0
+	 * @access     protected
+	 * @param      $terms
+	 * @return     array
 	 */
-	public function iterate_terms( $terms ) {
+	protected function iterate_terms( $terms ) {
 
 		foreach ( $terms as $term ) {
 			$this->structure['names'][] = $term->name;
@@ -232,9 +268,12 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
+	 * Loops through taxonomies and builds the structure.
 	 *
+	 * @since      1.0.0
+	 * @access     protected
 	 */
-	public function iterate_taxonomies() {
+	protected function iterate_taxonomies() {
 
 		foreach ( $this->taxonomies as $taxonomy ) {
 
@@ -252,25 +291,25 @@ final class WP_Terms_CSV_Factory {
 
 
 	/**
-	 * @param $array
+	 * A helper method to transpose ann array and provide better readability to the user.
 	 *
-	 * @return array
+	 * @since      1.0.0
+	 * @access     protected
+	 * @param      $array
+	 * @return     array
 	 */
 	public static function transpose( $array ) {
 		return array_map( null, ...$array );
 	}
 
 	/**
-	 * @param $header
+	 * Prepares the contents before appending to the file.
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     array
 	 */
-	public function set_header( $header ) {
-		return header( $header );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function prepare_contents() {
+	protected function prepare_contents() {
 		self::$file_data[] = $this->structure['names'];
 		self::$file_data[] = $this->structure['slugs'];
 		self::$file_data[] = $this->structure['count'];
@@ -279,9 +318,12 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
+	 * Puts the contents into a temporary file.
 	 *
+	 * @since      1.0.0
+	 * @access     protected
 	 */
-	public function output_to_file() {
+	protected function output_to_file() {
 
 		$file = fopen( 'php://output', 'w' );
 
@@ -291,9 +333,12 @@ final class WP_Terms_CSV_Factory {
 	}
 
 	/**
+	 * Sums up all the methods into one and performs the export.
 	 *
+	 * @since      1.0.0
+	 * @access     protected
 	 */
-	public function run_export() {
+	protected function run_export() {
 
 		$this->get_taxonomies();
 
@@ -312,11 +357,18 @@ final class WP_Terms_CSV_Factory {
 		exit();
 	}
 
-	public static function init()
-	{
-		if (!isset(self::$instance)) {
+	/**
+	 * A method to instanciate the class.
+	 *
+	 * @since      1.0.0
+	 * @access     protected
+	 * @return     array|WP_Terms_CSV_Factory
+	 */
+	public static function init() {
+		if ( ! isset( self::$instance ) ) {
 			self::$instance = new WP_Terms_CSV_Factory();
 		}
+
 		return self::$instance;
 	}
 

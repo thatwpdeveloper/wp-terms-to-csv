@@ -148,10 +148,6 @@ class Wp_Terms_To_Csv {
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_page' );
 		$this->loader->add_action( 'admin_post_' . $this->get_plugin_name(), $plugin_admin, 'process_export' );
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
 	}
 
 	/**

@@ -38,36 +38,16 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'WP_TERMS_TO_CSV_VERSION', '1.0.0' );
 
 /**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-wp-terms-to-csv-activator.php
- */
-function activate_wp_terms_to_csv() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-terms-to-csv-activator.php';
-	Wp_Terms_To_Csv_Activator::activate();
-}
-
-/**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-wp-terms-to-csv-deactivator.php
- */
-function deactivate_wp_terms_to_csv() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-terms-to-csv-deactivator.php';
-	Wp_Terms_To_Csv_Deactivator::deactivate();
-}
-
-register_activation_hook( __FILE__, 'activate_wp_terms_to_csv' );
-register_deactivation_hook( __FILE__, 'deactivate_wp_terms_to_csv' );
-
-/**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-wp-terms-to-csv.php';
 
 /**
- * TODO: write
+ * The class that performs the extraction of the terms' names, slugs and count
+ * and otputs them in a .csv file.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-wp-terms-to-csv-exporter.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-wp-terms-to-csv-factory.php';
 
 /**
  * Begins execution of the plugin.
